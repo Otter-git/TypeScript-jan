@@ -1,14 +1,20 @@
 import { renderBlock } from './lib.js';
+import { searchFormResult } from './search-results.js';
 export function renderSearchFormBlock(firstDate, lastDate) {
     const date = new Date();
     const nextDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 2);
     const checkinDate = nextDay.toJSON().slice(0, 10);
     const lastDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 4);
     const checkoutDate = lastDay.toJSON().slice(0, 10);
-    // const checkinDate = now.getFullYear() + '-' + ('0' + (now.getMonth() + 1)).slice(-2) + '-' + ('0' + (+(now.getDate()) + 1)).slice(-2);
-    // const checkoutDate = now.getFullYear() + '-' + ('0' + (now.getMonth() + 1)).slice(-2) + '-' + ('0' + (+(now.getDate()) + 3)).slice(-2);
+    function search(event) {
+        event.preventDefault();
+        const checkinValue = document.getElementById('check-in-date').value;
+        const checkoutValue = document.getElementById('check-out-date').value;
+        const priceValue = document.getElementById('max-price').value;
+        searchFormResult(checkinValue, checkoutValue, priceValue);
+    }
     renderBlock('search-form-block', `
-    <form>
+    <form id="form-btn">
       <fieldset class="search-filedset">
         <div class="row">
           <div>
@@ -41,4 +47,6 @@ export function renderSearchFormBlock(firstDate, lastDate) {
       </fieldset>
     </form>
     `);
+    const formBtn = document.getElementById('form-btn');
+    formBtn.addEventListener('submit', search);
 }

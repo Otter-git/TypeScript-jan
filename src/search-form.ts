@@ -1,4 +1,5 @@
 import { renderBlock } from './lib.js'
+import { searchFormResult } from './search-results.js'
 
 export function renderSearchFormBlock(firstDate, lastDate) {
   const date = new Date();
@@ -7,10 +8,18 @@ export function renderSearchFormBlock(firstDate, lastDate) {
   const lastDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 4);
   const checkoutDate = lastDay.toJSON().slice(0, 10);
 
+  function search(event) {
+    event.preventDefault();
+    const checkinValue = (<HTMLInputElement>document.getElementById('check-in-date')).value;
+    const checkoutValue = (<HTMLInputElement>document.getElementById('check-out-date')).value;
+    const priceValue = (<HTMLInputElement>document.getElementById('max-price')).value;
+    searchFormResult(checkinValue, checkoutValue, priceValue);
+  }
+
   renderBlock(
     'search-form-block',
     `
-    <form>
+    <form id="form-btn">
       <fieldset class="search-filedset">
         <div class="row">
           <div>
@@ -44,4 +53,7 @@ export function renderSearchFormBlock(firstDate, lastDate) {
     </form>
     `
   )
+
+  const formBtn = <HTMLFormElement>document.getElementById('form-btn');
+  formBtn.addEventListener('submit', search);
 }

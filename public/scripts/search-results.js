@@ -1,4 +1,7 @@
 import { renderBlock } from './lib.js';
+export function searchFormResult(checkinValue, checkoutValue, priceValue) {
+    console.log(checkinValue, checkoutValue, priceValue);
+}
 export function renderSearchStubBlock() {
     renderBlock('search-results-block', `
     <div class="before-results-block">
