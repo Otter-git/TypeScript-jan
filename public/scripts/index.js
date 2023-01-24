@@ -1,0 +1,35 @@
+import { renderSearchFormBlock } from './search-form.js';
+import { renderSearchStubBlock } from './search-results.js';
+import { renderUserBlock } from './user.js';
+import { renderToast } from './lib.js';
+const usersData = {
+    'username': 'Wade Warren',
+    'avatarUrl': '/img/avatar.png'
+};
+localStorage.setItem('user', JSON.stringify(usersData));
+localStorage.setItem('favoritesAmount', '5');
+function getUserData(value) {
+    if (value instanceof Storage) {
+        const data = value.getItem('user');
+        const user = JSON.parse(data);
+        return user;
+    }
+}
+const userData = getUserData(localStorage);
+function getFavoritesAmount(value) {
+    if (value instanceof Storage) {
+        const amount = value.getItem('favoritesAmount');
+        return amount;
+    }
+}
+const favoritesAmount = getFavoritesAmount(localStorage);
+window.addEventListener('DOMContentLoaded', () => {
+    const date = new Date();
+    const firstDate = date.toJSON().slice(0, 10);
+    const lastDay = new Date(date.getFullYear(), date.getMonth() + 2, 1);
+    const lastDate = lastDay.toJSON().slice(0, 10);
+    renderUserBlock(userData.username, userData.avatarUrl, favoritesAmount);
+    renderSearchFormBlock(firstDate, lastDate);
+    renderSearchStubBlock();
+    renderToast({ text: 'Это пример уведомления. Используйте его при необходимости', type: 'success' }, { name: 'Понял', handler: () => { console.log('Уведомление закрыто'); } });
+});
