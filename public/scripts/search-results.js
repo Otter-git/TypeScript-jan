@@ -1,5 +1,15 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 import { renderBlock } from './lib.js';
 import { toggleFavoriteItem } from './toggleFavoriteItem.js';
+import { FlatRentSdk } from './flat-rent-sdk.js';
 function responseToJson(requestPromise) {
     return requestPromise
         .then((response) => {
@@ -9,16 +19,47 @@ function responseToJson(requestPromise) {
         return JSON.parse(response);
     });
 }
-export function searchFormResult(checkinValue, checkoutValue, priceValue) {
-    console.log(checkinValue, checkoutValue, priceValue);
-    let url = 'http://localhost:3030/places?' +
-        `checkInDate=${checkinValue}&` +
-        `checkOutDate=${checkoutValue}&` +
-        'coordinates=59.9386,30.3141';
-    if (priceValue != null) {
-        url += `&maxPrice=${priceValue}`;
+class Flat {
+    constructor(id, name, description, image, price, remoteness) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.image = image;
+        this.price = price;
+        this.remoteness = remoteness;
     }
-    return responseToJson(fetch(url));
+}
+export function searchFormResult(checkinValue, checkoutValue, priceValue) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let url = 'http://localhost:3030/places?' +
+            `checkInDate=${checkinValue}&` +
+            `checkOutDate=${checkoutValue}&` +
+            'coordinates=59.9386,30.3141';
+        if (priceValue != null) {
+            url += `&maxPrice=${priceValue}`;
+        }
+        const results = [];
+        yield responseToJson(fetch(url))
+            .then(function (apiresults) {
+            apiresults.forEach(element => {
+                results.push(new Flat(element.id, element.name, element.description, element.image, element.price, element.remoteness));
+            });
+        });
+        const sdkBase = new FlatRentSdk();
+        const sdkBaseResults = sdkBase.search({
+            city: 'Санкт-Петербург', checkInDate: new Date(checkinValue),
+            checkOutDate: new Date(checkoutValue), priceLimit: priceValue,
+        });
+        sdkBaseResults.then(function (fileresults) {
+            fileresults.forEach(element => {
+                const days = (checkoutValue - checkinValue) / 86400000;
+                results.push(new Flat(element.id, element.title, element.details, element.photos[0], element.totalPrice / days, 'не указано'));
+            });
+        });
+        return new Promise((resolve, reject) => {
+            resolve(results);
+        });
+    });
 }
 export function renderSearchStubBlock() {
     renderBlock('search-results-block', `
@@ -38,7 +79,7 @@ export function renderEmptyOrErrorSearchBlock(reasonMessage) {
 }
 export function renderSearchResultsBlock(results) {
     let itemBlock = '';
-    results.forEach(element => {
+    for (const element of results) {
         itemBlock = itemBlock + `
     <ul class="results-list">
       <li class="result">
@@ -64,7 +105,8 @@ export function renderSearchResultsBlock(results) {
       </li>
     </ul>
     `;
-    });
+    }
+    console.log(itemBlock);
     renderBlock('search-results-block', `<div class="search-results-header">
       <p>Результаты поиска</p>
       <div class="search-results-filter">

@@ -16,7 +16,6 @@ export function renderSearchFormBlock(firstDate, lastDate) {
         const checkoutForSearch = new Date(entity.checkoutValue).getTime();
         searchFormResult(checkinForSearch, checkoutForSearch, +entity.priceValue)
             .then((results) => {
-            console.log('places length', results);
             renderSearchResultsBlock(results);
         });
     }

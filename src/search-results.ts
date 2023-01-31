@@ -1,5 +1,6 @@
 import { renderBlock } from './lib.js'
 import { toggleFavoriteItem } from './toggleFavoriteItem.js'
+import { FlatRentSdk } from './flat-rent-sdk.js'
 
 function responseToJson(requestPromise) {
   return requestPromise
@@ -11,8 +12,26 @@ function responseToJson(requestPromise) {
     })
 }
 
-export function searchFormResult(checkinValue: number, checkoutValue: number, priceValue?: number) {
-  console.log(checkinValue, checkoutValue, priceValue);
+class Flat {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  price: number;
+  remoteness: string;
+
+  constructor(id: string, name: string, description: string,
+    image: string, price: number, remoteness: string) {
+    this.id = id;
+    this.name = name;
+    this.description = description;
+    this.image = image;
+    this.price = price;
+    this.remoteness = remoteness;
+  }
+
+}
+export async function searchFormResult(checkinValue: number, checkoutValue: number, priceValue?: number) {
   let url = 'http://localhost:3030/places?' +
     `checkInDate=${checkinValue}&` +
     `checkOutDate=${checkoutValue}&` +
@@ -22,7 +41,34 @@ export function searchFormResult(checkinValue: number, checkoutValue: number, pr
     url += `&maxPrice=${priceValue}`
   }
 
-  return responseToJson(fetch(url))
+  const results = [];
+
+  await responseToJson(fetch(url))
+    .then(function (apiresults) {
+      apiresults.forEach(element => {
+        results.push(new Flat(element.id, element.name, element.description, element.image,
+          element.price, element.remoteness));
+      });
+    })
+
+  const sdkBase = new FlatRentSdk()
+
+  const sdkBaseResults = sdkBase.search({
+    city: 'Санкт-Петербург', checkInDate: new Date(checkinValue),
+    checkOutDate: new Date(checkoutValue), priceLimit: priceValue,
+  });
+  sdkBaseResults.then(function (fileresults) {
+    fileresults.forEach(element => {
+      const days = (checkoutValue - checkinValue) / 86400000;
+      results.push(new Flat(element.id, element.title, element.details,
+        element.photos[0], element.totalPrice / days, 'не указано'))
+    });
+  });
+
+  return new Promise((resolve, reject) => {
+    resolve(results);
+  });
+
 }
 
 export function renderSearchStubBlock() {
@@ -51,7 +97,7 @@ export function renderEmptyOrErrorSearchBlock(reasonMessage) {
 
 export function renderSearchResultsBlock(results) {
   let itemBlock = ''
-  results.forEach(element => {
+  for (const element of results) {
     itemBlock = itemBlock + `
     <ul class="results-list">
       <li class="result">
@@ -77,7 +123,8 @@ export function renderSearchResultsBlock(results) {
       </li>
     </ul>
     `
-  });
+  }
+  console.log(itemBlock);
   renderBlock(
     'search-results-block',
     `<div class="search-results-header">

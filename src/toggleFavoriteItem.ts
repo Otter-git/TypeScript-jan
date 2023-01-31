@@ -1,3 +1,6 @@
+import { renderUserFavorites } from './user.js'
+import { getFavoritesAmount } from './favoritesAmount.js';
+
 export function toggleFavoriteItem(event) {
     const favoriteItemImg = event.target.parentElement.lastElementChild.src;
     const favoriteItemName = event.target.parentElement.parentElement.lastElementChild.firstElementChild.firstElementChild.textContent;
@@ -11,7 +14,11 @@ export function toggleFavoriteItem(event) {
         }));
     } else {
         localStorage.removeItem(`favoriteItems_${favoriteId}`);
-        console.log('remove');
     }
-    localStorage.setItem('favoritesAmount', JSON.stringify(localStorage.length - 2));
+    if (localStorage.getItem('favoritesAmount') != null) {
+        localStorage.setItem('favoritesAmount', JSON.stringify(localStorage.length - 3));
+    } else {
+        localStorage.setItem('favoritesAmount', '1');
+    }
+    renderUserFavorites(getFavoritesAmount(localStorage));
 }

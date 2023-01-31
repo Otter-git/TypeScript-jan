@@ -1,7 +1,7 @@
 import { renderBlock } from './lib.js';
 export function renderUserBlock(userName, picLink, favoriteItemsAmount) {
-    const favoritesCaption = favoriteItemsAmount ? favoriteItemsAmount : 'ничего нет';
-    const hasFavoriteItems = favoriteItemsAmount ? true : false;
+    const favoritesCaption = favoriteItemsAmount !== '0' && favoriteItemsAmount != null ? favoriteItemsAmount : 'ничего нет';
+    const hasFavoriteItems = favoriteItemsAmount !== '0' && favoriteItemsAmount != null ? true : false;
     renderBlock('user-block', `
     <div class="header-container">
       <img class="avatar" src="${picLink}" alt="${userName}" />
@@ -13,4 +13,9 @@ export function renderUserBlock(userName, picLink, favoriteItemsAmount) {
       </div>
     </div>
     `);
+}
+export function renderUserFavorites(favoriteItemsAmount) {
+    const favoritesCaption = favoriteItemsAmount !== '0' && favoriteItemsAmount != null ? favoriteItemsAmount : 'ничего нет';
+    const hasFavoriteItems = favoriteItemsAmount !== '0' && favoriteItemsAmount != null ? true : false;
+    document.querySelector('.fav').innerHTML = `<i class="heart-icon${hasFavoriteItems ? ' active' : ''}"></i>${favoritesCaption}`;
 }
