@@ -1,17 +1,24 @@
 import { renderBlock } from './lib.js';
 import { searchFormResult } from './search-results.js';
+import { renderSearchResultsBlock } from './search-results.js';
 export function renderSearchFormBlock(firstDate, lastDate) {
     const date = new Date();
     const nextDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 2);
     const checkinDate = nextDay.toJSON().slice(0, 10);
     const lastDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 4);
     const checkoutDate = lastDay.toJSON().slice(0, 10);
-    function search(event) {
-        event.preventDefault();
-        const checkinValue = document.getElementById('check-in-date').value;
-        const checkoutValue = document.getElementById('check-out-date').value;
-        const priceValue = document.getElementById('max-price').value;
-        searchFormResult(checkinValue, checkoutValue, priceValue);
+    const formData = {};
+    function search(entity) {
+        entity.checkinValue = document.getElementById('check-in-date').value;
+        entity.checkoutValue = document.getElementById('check-out-date').value;
+        entity.priceValue = document.getElementById('max-price').value;
+        const checkinForSearch = new Date(entity.checkinValue).getTime();
+        const checkoutForSearch = new Date(entity.checkoutValue).getTime();
+        searchFormResult(checkinForSearch, checkoutForSearch, +entity.priceValue)
+            .then((results) => {
+            console.log('places length', results);
+            renderSearchResultsBlock(results);
+        });
     }
     renderBlock('search-form-block', `
     <form id="form-btn">
@@ -41,12 +48,15 @@ export function renderSearchFormBlock(firstDate, lastDate) {
             <input id="max-price" type="text" value="" name="price" class="max-price" />
           </div>
           <div>
-            <div><button>Найти</button></div>
+            <div><button type="submit">Найти</button></div>
           </div>
         </div>
       </fieldset>
     </form>
     `);
     const formBtn = document.getElementById('form-btn');
-    formBtn.addEventListener('submit', search);
+    formBtn.onsubmit = (event) => {
+        event.preventDefault();
+        search(formData);
+    };
 }

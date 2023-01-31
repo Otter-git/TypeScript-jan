@@ -1,5 +1,7 @@
 import { renderBlock } from './lib.js'
 import { searchFormResult } from './search-results.js'
+import { SearchFormData } from './searchFormData.js'
+import { renderSearchResultsBlock } from './search-results.js'
 
 export function renderSearchFormBlock(firstDate, lastDate) {
   const date = new Date();
@@ -8,12 +10,19 @@ export function renderSearchFormBlock(firstDate, lastDate) {
   const lastDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 4);
   const checkoutDate = lastDay.toJSON().slice(0, 10);
 
-  function search(event) {
-    event.preventDefault();
-    const checkinValue = (<HTMLInputElement>document.getElementById('check-in-date')).value;
-    const checkoutValue = (<HTMLInputElement>document.getElementById('check-out-date')).value;
-    const priceValue = (<HTMLInputElement>document.getElementById('max-price')).value;
-    searchFormResult(checkinValue, checkoutValue, priceValue);
+  const formData = {} as SearchFormData;
+
+  function search(entity: SearchFormData) {
+    entity.checkinValue = (<HTMLInputElement>document.getElementById('check-in-date')).value;
+    entity.checkoutValue = (<HTMLInputElement>document.getElementById('check-out-date')).value;
+    entity.priceValue = (<HTMLInputElement>document.getElementById('max-price')).value;
+    const checkinForSearch = new Date(entity.checkinValue).getTime();
+    const checkoutForSearch = new Date(entity.checkoutValue).getTime();
+    searchFormResult(checkinForSearch, checkoutForSearch, +entity.priceValue)
+      .then((results) => {
+        console.log('places length', results);
+        renderSearchResultsBlock(results);
+      });
   }
 
   renderBlock(
@@ -46,7 +55,7 @@ export function renderSearchFormBlock(firstDate, lastDate) {
             <input id="max-price" type="text" value="" name="price" class="max-price" />
           </div>
           <div>
-            <div><button>Найти</button></div>
+            <div><button type="submit">Найти</button></div>
           </div>
         </div>
       </fieldset>
@@ -55,5 +64,8 @@ export function renderSearchFormBlock(firstDate, lastDate) {
   )
 
   const formBtn = <HTMLFormElement>document.getElementById('form-btn');
-  formBtn.addEventListener('submit', search);
+  formBtn.onsubmit = (event) => {
+    event.preventDefault()
+    search(formData);
+  }
 }

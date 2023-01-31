@@ -2,26 +2,14 @@ import { renderSearchFormBlock } from './search-form.js';
 import { renderSearchStubBlock } from './search-results.js';
 import { renderUserBlock } from './user.js';
 import { renderToast } from './lib.js';
+import { getUserData } from './userData.js';
+import { getFavoritesAmount } from './favoritesAmount.js';
 const usersData = {
     'username': 'Wade Warren',
     'avatarUrl': '/img/avatar.png'
 };
 localStorage.setItem('user', JSON.stringify(usersData));
-localStorage.setItem('favoritesAmount', '5');
-function getUserData(value) {
-    if (value instanceof Storage) {
-        const data = value.getItem('user');
-        const user = JSON.parse(data);
-        return user;
-    }
-}
 const userData = getUserData(localStorage);
-function getFavoritesAmount(value) {
-    if (value instanceof Storage) {
-        const amount = value.getItem('favoritesAmount');
-        return amount;
-    }
-}
 const favoritesAmount = getFavoritesAmount(localStorage);
 window.addEventListener('DOMContentLoaded', () => {
     const date = new Date();
