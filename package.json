@@ -1,0 +1,36 @@
+{
+  "name": "homework",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "build": "rm -rf public/scripts && tsc && cp src/flat-rent-sdk.js public/scripts/",
+    "build:dev": "rm -rf public/scripts && tsc -p tsconfig-dev.json",
+    "start": "http-server -p 3000",
+    "lint": "eslint src --ext .js --ext .ts",
+    "lint-fix": "eslint src --ext .js --ext .ts --fix",
+    "test": "echo a && echo b"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Otter-git/TypeScript-jan.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Otter-git/TypeScript-jan/issues"
+  },
+  "homepage": "https://github.com/Otter-git/TypeScript-jan#readme",
+  "dependencies": {
+    "node-fetch": "^3.3.0",
+    "typescript": "^4.9.4"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/parser": "^5.48.2",
+    "eslint": "^8.32.0",
+    "http-server": "^14.1.1"
+  }
+}
