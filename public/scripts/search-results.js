@@ -42,7 +42,7 @@ export function searchFormResult(checkinValue, checkoutValue, priceValue) {
         const results = [];
         yield responseToJson(fetch(url))
             .then(function (apiresults) {
-            apiresults.forEach(element => {
+            apiresults.forEach((element) => {
                 results.push(new Flat(element.id, element.name, element.description, element.image, element.price, element.remoteness));
             });
         });

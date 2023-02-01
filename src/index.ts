@@ -12,7 +12,7 @@ const usersData = {
 localStorage.setItem('user', JSON.stringify(usersData));
 
 const userData = getUserData(localStorage);
-const favoritesAmount = getFavoritesAmount(localStorage);
+const favoritesAmount: string = getFavoritesAmount(localStorage) as string;
 
 window.addEventListener('DOMContentLoaded', () => {
 

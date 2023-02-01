@@ -3,7 +3,7 @@ import { toggleFavoriteItem } from './toggleFavoriteItem.js'
 import { FlatRentSdk } from './flat-rent-sdk.js'
 import { searchResultsArray } from './search-form.js'
 
-function responseToJson(requestPromise) {
+function responseToJson(requestPromise: Promise<Response>) {
   return requestPromise
     .then((response) => {
       return response.text()
@@ -42,11 +42,11 @@ export async function searchFormResult(checkinValue: number, checkoutValue: numb
     url += `&maxPrice=${priceValue}`
   }
 
-  const results = [];
+  const results = [] as Array<object>;
 
   await responseToJson(fetch(url))
     .then(function (apiresults) {
-      apiresults.forEach(element => {
+      apiresults.forEach((element: { id: string; name: string; description: string; image: string; price: number; remoteness: number }) => {
         results.push(new Flat(element.id, element.name, element.description, element.image,
           element.price, element.remoteness));
       });
@@ -56,7 +56,7 @@ export async function searchFormResult(checkinValue: number, checkoutValue: numb
 
   const sdkBaseResults = sdkBase.search({
     city: 'Санкт-Петербург', checkInDate: new Date(checkinValue),
-    checkOutDate: new Date(checkoutValue), priceLimit: priceValue,
+    checkOutDate: new Date(checkoutValue), priceLimit: priceValue as number,
   });
   sdkBaseResults.then(function (fileresults) {
     fileresults.forEach(element => {
@@ -84,7 +84,7 @@ export function renderSearchStubBlock() {
   )
 }
 
-export function renderEmptyOrErrorSearchBlock(reasonMessage) {
+export function renderEmptyOrErrorSearchBlock(reasonMessage: any) {
   renderBlock(
     'search-results-block',
     `
@@ -96,7 +96,7 @@ export function renderEmptyOrErrorSearchBlock(reasonMessage) {
   )
 }
 
-export function renderSearchResultsBlock(results) {
+export function renderSearchResultsBlock(results: any) {
   let itemBlock = ''
   for (const element of results) {
     itemBlock = itemBlock + `
@@ -156,7 +156,7 @@ export function renderSearchResultsBlock(results) {
   const selectBtn = <HTMLSelectElement>document.querySelector('.select');
   selectBtn.addEventListener('change', function () {
     if (this.value == 'cheap') {
-      searchResultsArray.sort(function (a, b) {
+      searchResultsArray.sort(function (a: { price: number }, b: { price: number }) {
         if (a.price > b.price) {
           return 1;
         }
@@ -167,7 +167,7 @@ export function renderSearchResultsBlock(results) {
       });
     }
     if (this.value == 'expensive') {
-      searchResultsArray.sort(function (a, b) {
+      searchResultsArray.sort(function (a: { price: number }, b: { price: number }) {
         if (b.price > a.price) {
           return 1;
         }
@@ -178,7 +178,7 @@ export function renderSearchResultsBlock(results) {
       });
     }
     if (this.value == 'remoteness') {
-      searchResultsArray.sort(function (a, b) {
+      searchResultsArray.sort(function (a: { remoteness: number }, b: { remoteness: number }) {
         if (a.remoteness > b.remoteness) {
           return 1;
         }

@@ -3,9 +3,9 @@ import { searchFormResult } from './search-results.js'
 import { SearchFormData } from './searchFormData.js'
 import { renderSearchResultsBlock } from './search-results.js'
 
-export let searchResultsArray;
+export let searchResultsArray: any;
 
-export function renderSearchFormBlock(firstDate, lastDate) {
+export function renderSearchFormBlock(firstDate: string, lastDate: string) {
   const date = new Date();
   const nextDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 2);
   const checkinDate = nextDay.toJSON().slice(0, 10);

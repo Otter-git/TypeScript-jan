@@ -1,6 +1,6 @@
 export function getUserData(value: unknown) {
     if (value instanceof Storage) {
-        const data = value.getItem('user');
+        const data: string = value.getItem('user') as string;
         const user = JSON.parse(data);
         return user
     }

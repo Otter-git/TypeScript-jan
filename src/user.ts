@@ -21,7 +21,7 @@ export function renderUserBlock(userName: string, picLink: string, favoriteItems
 }
 
 export function renderUserFavorites(favoriteItemsAmount?: string) {
-  const favoritesCaption = favoriteItemsAmount !== '0' && favoriteItemsAmount != null ? favoriteItemsAmount : 'ничего нет'
-  const hasFavoriteItems = favoriteItemsAmount !== '0' && favoriteItemsAmount != null ? true : false
-  document.querySelector('.fav').innerHTML = `<i class="heart-icon${hasFavoriteItems ? ' active' : ''}"></i>${favoritesCaption}`;
+  const favoritesCaption = favoriteItemsAmount !== '0' && favoriteItemsAmount != null ? favoriteItemsAmount : 'ничего нет';
+  const hasFavoriteItems = favoriteItemsAmount !== '0' && favoriteItemsAmount != null ? true : false;
+  (<HTMLElement>document.querySelector('.fav')).innerHTML = `<i class="heart-icon${hasFavoriteItems ? ' active' : ''}"></i>${favoritesCaption}`;
 }

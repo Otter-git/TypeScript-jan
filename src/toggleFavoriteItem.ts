@@ -1,7 +1,7 @@
 import { renderUserFavorites } from './user.js'
 import { getFavoritesAmount } from './favoritesAmount.js';
 
-export function toggleFavoriteItem(event) {
+export function toggleFavoriteItem(event: any) {
     const favoriteItemImg = event.target.parentElement.lastElementChild.src;
     const favoriteItemName = event.target.parentElement.parentElement.lastElementChild.firstElementChild.firstElementChild.textContent;
     const favoriteId = event.target.id
@@ -20,5 +20,5 @@ export function toggleFavoriteItem(event) {
     } else {
         localStorage.setItem('favoritesAmount', '1');
     }
-    renderUserFavorites(getFavoritesAmount(localStorage));
+    renderUserFavorites(getFavoritesAmount(localStorage) as string);
 }
