@@ -3,6 +3,8 @@ import { searchFormResult } from './search-results.js'
 import { SearchFormData } from './searchFormData.js'
 import { renderSearchResultsBlock } from './search-results.js'
 
+export let searchResultsArray;
+
 export function renderSearchFormBlock(firstDate, lastDate) {
   const date = new Date();
   const nextDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 2);
@@ -11,7 +13,6 @@ export function renderSearchFormBlock(firstDate, lastDate) {
   const checkoutDate = lastDay.toJSON().slice(0, 10);
 
   const formData = {} as SearchFormData;
-
   function search(entity: SearchFormData) {
     entity.checkinValue = (<HTMLInputElement>document.getElementById('check-in-date')).value;
     entity.checkoutValue = (<HTMLInputElement>document.getElementById('check-out-date')).value;
@@ -20,6 +21,7 @@ export function renderSearchFormBlock(firstDate, lastDate) {
     const checkoutForSearch = new Date(entity.checkoutValue).getTime();
     searchFormResult(checkinForSearch, checkoutForSearch, +entity.priceValue)
       .then((results) => {
+        searchResultsArray = results;
         renderSearchResultsBlock(results);
       });
   }

@@ -1,6 +1,7 @@
 import { renderBlock } from './lib.js';
 import { searchFormResult } from './search-results.js';
 import { renderSearchResultsBlock } from './search-results.js';
+export let searchResultsArray;
 export function renderSearchFormBlock(firstDate, lastDate) {
     const date = new Date();
     const nextDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 2);
@@ -16,6 +17,7 @@ export function renderSearchFormBlock(firstDate, lastDate) {
         const checkoutForSearch = new Date(entity.checkoutValue).getTime();
         searchFormResult(checkinForSearch, checkoutForSearch, +entity.priceValue)
             .then((results) => {
+            searchResultsArray = results;
             renderSearchResultsBlock(results);
         });
     }

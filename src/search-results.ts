@@ -1,6 +1,7 @@
 import { renderBlock } from './lib.js'
 import { toggleFavoriteItem } from './toggleFavoriteItem.js'
 import { FlatRentSdk } from './flat-rent-sdk.js'
+import { searchResultsArray } from './search-form.js'
 
 function responseToJson(requestPromise) {
   return requestPromise
@@ -18,10 +19,10 @@ class Flat {
   description: string;
   image: string;
   price: number;
-  remoteness: string;
+  remoteness: number;
 
   constructor(id: string, name: string, description: string,
-    image: string, price: number, remoteness: string) {
+    image: string, price: number, remoteness: number) {
     this.id = id;
     this.name = name;
     this.description = description;
@@ -61,7 +62,7 @@ export async function searchFormResult(checkinValue: number, checkoutValue: numb
     fileresults.forEach(element => {
       const days = (checkoutValue - checkinValue) / 86400000;
       results.push(new Flat(element.id, element.title, element.details,
-        element.photos[0], element.totalPrice / days, 'не указано'))
+        element.photos[0], element.totalPrice / days, 1))
     });
   });
 
@@ -124,17 +125,17 @@ export function renderSearchResultsBlock(results) {
     </ul>
     `
   }
-  console.log(itemBlock);
   renderBlock(
     'search-results-block',
     `<div class="search-results-header">
       <p>Результаты поиска</p>
       <div class="search-results-filter">
           <span><i class="icon icon-filter"></i> Сортировать:</span>
-          <select>
-              <option selected="">Сначала дешёвые</option>
-              <option selected="">Сначала дорогие</option>
-              <option>Сначала ближе</option>
+          <select class="select">
+              <option selected="">Выберите критерий</option>
+              <option value="cheap">Сначала дешёвые</option>
+              <option value="expensive">Сначала дорогие</option>
+              <option value="remoteness">Сначала ближе</option>
           </select>
       </div>
     </div>
@@ -150,5 +151,43 @@ export function renderSearchResultsBlock(results) {
       event.preventDefault()
       toggleFavoriteItem(event);
     }
+  })
+
+  const selectBtn = <HTMLSelectElement>document.querySelector('.select');
+  selectBtn.addEventListener('change', function () {
+    if (this.value == 'cheap') {
+      searchResultsArray.sort(function (a, b) {
+        if (a.price > b.price) {
+          return 1;
+        }
+        if (a.price < b.price) {
+          return -1;
+        }
+        return 0;
+      });
+    }
+    if (this.value == 'expensive') {
+      searchResultsArray.sort(function (a, b) {
+        if (b.price > a.price) {
+          return 1;
+        }
+        if (b.price < a.price) {
+          return -1;
+        }
+        return 0;
+      });
+    }
+    if (this.value == 'remoteness') {
+      searchResultsArray.sort(function (a, b) {
+        if (a.remoteness > b.remoteness) {
+          return 1;
+        }
+        if (a.remoteness < b.remoteness) {
+          return -1;
+        }
+        return 0;
+      });
+    }
+    renderSearchResultsBlock(searchResultsArray);
   })
 }
